@@ -2,13 +2,19 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#include <malloc.h>
 #include <time.h>
 
-#define FILE_NAME "output.txt"
+#define FILE_NAME "data.txt"
 
-int calculate_difference(int mas[], int size);
+int initialize_mas_size(int* size_r, int* size_c);
 
-void initialize_mas(int* mas, int size);
-void print_mas_rand(int* mas, int size);
+int initialize_mas_rand(int*** arr, int size_r, int size_c);
+void print_mas_rand(int** arr, int size_r, int size_c);
 
-void write_mas_to_file(int* mas, int size, const char* filename, int result);
+int calculate_difference(int** arr, int size_r, int size_c);
+
+int calculate_sum_columns(int** arr, int size_r, int size_c, int* sums);
+int calculate_sum_rows(int** arr, int size_r, int size_c, int* sums);
+
+void write_mas_to_file(int** arr, int size_r, int size_c, const char* filename, int result);

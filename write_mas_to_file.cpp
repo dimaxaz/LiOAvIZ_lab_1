@@ -1,20 +1,20 @@
 #include "task.h"
 
-void write_mas_to_file(int* mas, int size, const char* filename, int result)
-{
+void write_mas_to_file(int** arr, int size_r, int size_c, const char* filename, int result) {
     FILE* file = fopen(filename, "w");
-    if (file == NULL)
-    {
+    if (!file) {
         perror("Ошибка открытия файла");
         return;
     }
 
-    fprintf(file, "Массив:  ");
-    for (int i = 0; i < size; i++)
-        fprintf(file, "%d ", mas[i]);
-
-    fprintf(file, "\n");
-    fprintf(file, "Разница между максимальным и минимальным элементами массива: %d ", result);
-
+    fprintf(file, "Массив:\n");
+    for (int i = 0; i < size_r; i++) {
+        for (int j = 0; j < size_c; j++) {
+            fprintf(file, "%d ", arr[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+    fprintf(file, "Разница между максимальным и минимальным элементами: %d\n", result);
     fclose(file);
+    printf("Результаты записаны в файл '%s'.\n", filename);
 }
