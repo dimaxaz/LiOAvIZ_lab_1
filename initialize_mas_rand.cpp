@@ -1,7 +1,6 @@
 #include "task.h"
 
-int initialize_mas_rand(int*** arr, int size_r, int size_c)
-{
+int initialize_mas_rand(int*** arr, int size_r, int size_c){
     // Выделяем память под массив указателей на строки
     *arr = (int**)malloc(size_r * sizeof(int*));
     if (*arr == NULL) {
