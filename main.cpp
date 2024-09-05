@@ -42,20 +42,18 @@ int main()
         {
             result = calculate_difference(mas_rand, size_r, size_c);
             printf("Разница между максимальным и минимальным элементами массива: %d\n", result);
+            printf("\n");
+
         } break;
 
         case 2:
         {
-            printf("1) Сумму значений в каждом столбце\n \
+            printf("\n\
+                     1) Сумму значений в каждом столбце\n \
                     2) Сумму значений в каждой строке\n \
                     Введите ваш выбор: ");
 
-            if (scanf("%d", &choice_plus) != 1 )
-            {
-                printf("Неверный ввод. Попробуйте снова.\n");
-                while (getchar() != '\n');
-                continue;
-            }
+            scanf("%d", &choice_plus);
 
             switch (choice_plus)
             {
@@ -70,11 +68,6 @@ int main()
 
                 calculate_sum_columns(mas_rand, size_r, size_c, sum_column);
 
-                printf("Суммы значений в каждом столбце:\n");
-                for (int i = 0; i < size_c; i++)
-                    printf("Столбец %d: %d\n", i + 1, sum_column[i]);
-
-                free(sum_column);
             } break;
 
             case 2:
@@ -88,10 +81,6 @@ int main()
                 }
 
                 calculate_sum_rows(mas_rand, size_r, size_c, sum_row);
-
-                printf("Суммы значений в каждой строке:\n");
-                for (int i = 0; i < size_r; i++)
-                    printf("Строка %d: %d\n", i + 1, sum_row[i]);
 
                 free(sum_row);
             } break;
@@ -109,10 +98,9 @@ int main()
         } break;
 
         case 4:
-        {
+        
             write_mas_to_file(mas_rand, size_r, size_c, FILE_NAME, result);
-            printf("Результаты записаны в файл '%s'.\n", FILE_NAME, result);
-        } break;
+         break;
 
         case 5:
             printf("Выход из программы...\n");
