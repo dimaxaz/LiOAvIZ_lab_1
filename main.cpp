@@ -1,122 +1,135 @@
-﻿#include "task.h"
+﻿#include "student.h"
+
+void hide_cursor()
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+
+    GetConsoleCursorInfo(hConsole, &cursorInfo);
+    cursorInfo.bVisible = FALSE;
+    SetConsoleCursorInfo(hConsole, &cursorInfo);
+}
+
+void loading_animation()
+{
+    const char* loading_chars = "|/-\\";
+
+    for (int i = 0; i < 25; i++)
+    {
+        system("cls");
+        printf("Загрузка");
+
+        for (int j = 0; j < 3; j++)
+        {
+            printf(".");
+            fflush(stdout);
+            Sleep(30);
+        }
+        printf(" %c\n", loading_chars[i % 4]);
+    }
+
+    system("cls");
+    printf("Загрузка завершена!\n");
+}
 
 int main()
 {
     system("chcp 1251 > nul");
 
-    int size_r = NULL;
-    int size_c = NULL;
-    int choice, choice_plus;
-    int result;
+    Student students[100];
 
-    if (initialize_mas_size(&size_r,&size_c) != 0) return 1;
+    int count = 0;
+    int choice;
+    int sort_choice;
 
-    int** mas_rand = (int**)malloc(size_r * sizeof(int*));
-    for (int i = 0; i < size_r; i++)
-        mas_rand[i] = (int*)malloc(size_c * sizeof(int));
+    hide_cursor();
+    loading_animation();
+    Sleep(1000);
 
-    initialize_mas_rand(&mas_rand, size_r, size_c);
-    printf("Массив, инициализированный случайными числами:\n");
-    print_mas_rand(mas_rand, size_r, size_c);
-
-    do 
+    do
     {
-        printf("Выберите задание для проверки:\n \
-            1) Вычисляющую разницу между максимальным и минимальным элементами массива\n \
-            2) Вычисляющую сумму значений в каждом столбце(строке)\n \
-            3) Заново сгенерировать числа\n \
-            4) Записать результаты в файл\n \
-            5) Выйти из программы\n \
-            Введите ваш выбор: ");
+        system("cls");
 
-        if (scanf("%d", &choice) != 1)
+        printf("\n=======================\n");
+        printf("   Студенты Меню\n");
+        printf("=======================\n");
+        printf("1. Добавить студента\n");
+        printf("2. Удалить студента\n");
+        printf("3. Искать студента\n");
+        printf("4. Показать всех студентов\n");
+        printf("5. Сортировать студентов\n");
+        printf("6. Сохранить в файл\n");
+        printf("7. Загрузить из файла\n");
+        printf("0. Выход\n");
+        printf("=======================\n");
+        printf("Выберите действие: ");
+
+        while (scanf("%d", &choice) != 1 || choice < 0 || choice > 7)
         {
-            printf("Неверный ввод. Попробуйте снова.\n");
+            printf("Ошибка: Пожалуйста, введите число от 0 до 7.\n");
             while (getchar() != '\n');
-            continue;
+            printf("Выберите опцию: ");
         }
-
         switch (choice)
         {
         case 1:
-        {
-            result = calculate_difference(mas_rand, size_r, size_c);
-            printf("Разница между максимальным и минимальным элементами массива: %d\n", result);
-            printf("\n");
-
-        } break;
+            add_student(students, &count);
+            break;
 
         case 2:
-        {
-            printf("\n\
-                     1) Сумму значений в каждом столбце\n \
-                    2) Сумму значений в каждой строке\n \
-                    Введите ваш выбор: ");
-
-            scanf("%d", &choice_plus);
-
-            switch (choice_plus)
-            {
-            case 1:
-            {
-                int* sum_column = (int*)malloc(size_c * sizeof(int));
-                if (!sum_column)
-                {
-                    perror("Ошибка выделения памяти для суммы столбцов");
-                    break;
-                }
-
-                calculate_sum_columns(mas_rand, size_r, size_c, sum_column);
-
-            } break;
-
-            case 2:
-            {
-                int* sum_row = (int*)malloc(size_r * sizeof(int));
-
-                if (!sum_row)
-                {
-                    perror("Ошибка выделения памяти для суммы строк");
-                    break;
-                }
-
-                calculate_sum_rows(mas_rand, size_r, size_c, sum_row);
-
-                free(sum_row);
-            } break;
-
-            default:
-                printf("Неверный выбор. Пожалуйста, попробуйте снова.\n");
-            }
-        } break;
+            delete_student(students, &count);
+            break;
 
         case 3:
-        {
-            initialize_mas_rand(&mas_rand, size_r, size_c);
-            printf("Массив заново инициализирован.\n");
-            print_mas_rand(mas_rand, size_r, size_c);
-        } break;
+            search_student(students, count);
+            break;
 
         case 4:
-        
-            write_mas_to_file(mas_rand, size_r, size_c, FILE_NAME, result);
-         break;
+            if (count == 0)
+                printf("Список студентов пуст.\n");
+            else
+                display_students(students, count);
+            break;
 
         case 5:
-            printf("Выход из программы...\n");
+            printf("Выберите параметр сортировки:\n");
+            printf("1. Имя\n");
+            printf("2. Фамилия\n");
+            printf("3. Год рождения\n");
+
+            scanf("%d", &sort_choice);
+            if (sort_choice < 1 || sort_choice > 3)
+                printf("Ошибка: Неверный выбор сортировки.\n");
+            else
+            {
+                sort_students(students, count, sort_choice);
+                printf("Студенты успешно отсортированы!\n");
+            }
+            break;
+
+        case 6:
+            save_to_file(students, count, "students.txt");
+            printf("Данные успешно сохранены в файл 'students.txt'.\n");
+            break;
+
+        case 7:
+            load_from_file(students, &count, "students.txt");
+            printf("Данные успешно загружены из файла 'students.txt'.\n");
+            break;
+
+        case 0:
+            printf("Выход...\n");
             break;
 
         default:
-            printf("Неверный выбор. Пожалуйста, попробуйте снова.\n");
+            printf("Неверный выбор. Попробуйте еще раз.\n");
         }
 
-    } while (choice != 5);
+        printf("\nНажмите Enter, чтобы продолжить...");
+        while (getchar() != '\n');
+        getchar();
 
-
-    for (int i = 0; i < size_r; i++)
-        free(mas_rand[i]);
-
-    free(mas_rand);
+    } while (choice != 0);
 
     return 0;
 }
